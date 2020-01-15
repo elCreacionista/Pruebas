@@ -1,0 +1,96 @@
+package Arboles;
+
+import java.awt.*;
+
+public class Arbol {
+
+
+    Turtle arbol;
+    int nramas;
+
+    public static void main(String[] args) {
+        Arbol p = new Arbol(60,300,2);
+        p.arbol.show();
+
+    }
+    Arbol(int nramas, int tamaniotronco, int anchotronco){
+        this.nramas = nramas;
+        this.arbol = new Turtle(400,500, "ARBOL");
+        this.crearArbol(tamaniotronco,anchotronco);
+    }
+    
+    public void hojas(){
+        int tamanio = 32;
+        this.arbol.turnRight(40);
+        for (int i = 0; i < tamanio ; i++) {
+            this.arbol.forward(1, Color.GREEN);
+            if ((float) i/tamanio < 0.5){
+                this.arbol.turnLeft(i);
+            }
+            else{
+                this.arbol.turnLeft(tamanio - i);
+            }
+        }
+        
+        
+    }
+    
+    
+
+    public void crearRamitas(boolean hayramitas){
+        if (hayramitas) {
+            int tamanio = (int) (Math.random() * 30) + 20;
+            int pos = (int) (Math.random() * 60);
+            arbol.forward(- pos, Color.BLACK);
+            int angulo = (int) (Math.random() * 180) - 90;
+            arbol.turnRight(angulo);
+            arbol.forward(tamanio, Color.BLACK);
+            this.hojas();
+        }
+    }
+
+
+
+    public void crearArbol(int tamanioTronco, int anchoTronco){
+        for (int i = -anchoTronco; i <anchoTronco ; i++) {
+            int randN = (int)(Math.random()*5)-2;
+            arbol.goTo(i,-250 + randN);
+            arbol.forward(tamanioTronco, Color.BLACK);
+        }
+
+
+
+        arbol.goTo(anchoTronco,-250);
+        arbol.forward(tamanioTronco, Color.BLACK);
+
+        for (int i = 0; i < this.nramas ; i++) {
+            int largo = (int) (Math.random() * 70) + 100;
+            int pos = (int) (Math.random() * 60);
+            int angulo = (int) (Math.random() * 180) - 90;
+            int direccion;
+            for (int j = 0; j < 7 ; j++) {
+                hojas();
+                arbol.forward(0,Color.BLACK);
+                arbol.resetAngle();
+
+                if (angulo < 0){
+                    arbol.goTo(anchoTronco,-250 + tamanioTronco - pos);
+                    arbol.turnLeft(angulo);
+                    arbol.forward(largo, Color.BLACK);
+                }
+                else{
+                    arbol.goTo(-anchoTronco,-250 + tamanioTronco - pos);
+                    arbol.turnRight(-angulo);
+                    arbol.forward(largo, Color.BLACK);
+                }
+
+                crearRamitas(true);
+            }
+
+        }
+
+    }
+
+
+
+}
