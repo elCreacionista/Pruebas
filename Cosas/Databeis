@@ -1,0 +1,58 @@
+package Databeis;
+
+import java.sql.*;
+
+public class Database {
+
+    public static void main(String[] args) throws Exception {
+        Database p = new Database();
+
+        new Pantalla(p);
+
+
+    }
+
+
+    String myDriver= "com.mysql.jdbc.Driver";
+    String myUrl= "jdbc:mysql://localhost/ejercicio26";
+    Connection conn;
+    String query;
+    Statement st;
+    ResultSet rs;
+    public void CrearConexion() throws Exception {
+
+        Class.forName(myDriver);
+        conn = DriverManager.getConnection(myUrl, "El_Tuyo", "pene");
+        System.out.println("Conectando con la base");
+    }
+    public void Desconectar() throws SQLException {
+
+        if (conn != null)
+        conn.close();
+        if (st != null)
+        st.close();
+        if (rs != null)
+        rs.close();
+        System.out.println("cerrando conexion");
+    }
+
+    public void Preguntar(String query) throws Exception {
+        this.query = query;
+        st = conn.createStatement();
+        rs = st.executeQuery(query);
+    }
+
+    public void getResults() throws Exception{
+
+        while (rs.next()){
+            int id = rs.getInt("id_alumno");
+            String dni = rs.getNString("dni");
+            String nombre = rs.getNString("nombre");
+            nombre += " ";
+            nombre += rs.getNString("apellido1");
+            nombre += " ";
+            nombre += rs.getString("apellido2");
+            System.out.println(id + " " + dni + " " + nombre);
+        }
+    }
+}
