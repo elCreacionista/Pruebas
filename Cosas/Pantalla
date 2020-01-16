@@ -1,0 +1,143 @@
+package Databeis;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
+
+public class Pantalla extends JFrame {
+
+    public static boolean conectado = false;
+
+    JPanel p_botones = new JPanel();
+    JPanel p_respuestas = new JPanel();
+
+    JButton conectar = new JButton();
+    JButton[] operaciones, consultas, inserciones, eliminar, actualizar;
+
+    JLabel conexion = new JLabel();
+
+
+    Pantalla(Database p){
+        new JFrame("DATABASE");
+        setSize(600,500);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLayout(new GridLayout(2,1));
+        add(p_botones);add(p_respuestas);
+        PrimerBoton(p);
+        crearJPRespuestas(p);
+        crearComportamientoBotones(p);
+        p_respuestas.add(conexion);
+        setVisible(true);
+    }
+    public void crearJPRespuestas(Database p){
+        p_respuestas.setBackground(Color.LIGHT_GRAY);
+        p_respuestas.setLayout(new GridLayout(3,2, 10,10));
+        ActualizarConexion();
+
+    }
+    public void ActualizarConexion(){
+        if (conectado)conexion.setText("Conectado a la base de datos.");
+        else conexion.setText("Desconectado de la base de datos.");
+    }
+
+    public void crearJPBotones(Database p){
+        p_botones.setLayout(new GridLayout(3,2, 10,10));
+        p_botones.setBackground(Color.DARK_GRAY);
+        setJBOperaciones(p);
+    }
+    public void crearComportamientoBotones(Database p){
+        conectar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (!conectado) {
+                    try {
+                        p.CrearConexion();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    conectado = true;
+                    p_botones.removeAll();
+                    crearJPBotones(p);
+                    ActualizarConexion();
+                    PrimerBoton(p);
+
+                }
+                else{
+                    try {
+                        p.Desconectar();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    conectado = false;
+                    PrimerBoton(p);
+                    ActualizarConexion();
+                }
+
+            }
+        });
+
+        operaciones = new JButton[4];
+        for (int i = 0; i < operaciones.length ; i++) {
+            operaciones[i] = new JButton();
+            operaciones[i].setBackground(Color.GRAY);
+        }
+
+        operaciones[0].setText("CONSULTAR");
+        operaciones[0].addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                System.out.println("hola");
+            }
+        });
+        operaciones[1].setText("INSERTAR");
+        operaciones[1].addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                System.out.println("inserta");
+            }
+        });
+        operaciones[2].setText("ELIMINAR");
+        operaciones[2].addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                System.out.println("elimina");
+            }
+        });
+        operaciones[3].setText("ACTUALIZAR");
+        operaciones[3].addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                System.out.println("actualiza");
+            }
+        });
+    }
+
+    public void PrimerBoton(Database p){
+        if (conectado){
+            p_botones.remove(conectar);
+            p_botones.add(conectar);
+            conectar.setText("DESCONECTAR");
+        }
+        else {
+            p_botones.removeAll();
+            p_botones.add(conectar);
+            conectar.setText("CONECTAR");
+            p_botones.setLayout(new GridLayout(1,1, 10,10));
+        }
+        conectar.setBackground(Color.white);
+
+    }
+
+    public void setJBOperaciones(Database p){
+        p_botones.removeAll();
+        for (int i = 0; i < operaciones.length ; i++) {
+            p_botones.add(operaciones[i]);
+        }
+
+    }
+
+}
