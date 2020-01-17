@@ -23,8 +23,10 @@ public class Pantalla extends JFrame {
     JLabel[] teibol;
 
 
-    String[][] tablabase1;
     String[][][] tablabase;
+    String[][] tablabase1;
+    String[] tablabase2;
+    String[] tablabase2_2;
 
 
     Pantalla(Database p) throws Exception {
@@ -153,19 +155,14 @@ public class Pantalla extends JFrame {
 
         String[] tablas = p.Preguntar("show tables","tables_in_"+ p.namedatabase);
         tables = new JButton[tablas.length];
-        teibol = new JLabel[tablas.length];
         tablabase = new String[tablas.length][][];
 
         for (int i = 0; i < tables.length ; i++) {
             tables[i] = new JButton();
             tables[i].setText(tablas[i]);
             tables[i].setBackground(Color.GRAY);
-            teibol[i] = new JLabel();
 
             tablabase[i] = p.Preguntar("SHOW COLUMNS FROM " + tablas[i], new String[]{"Field", "Type"});
-
-
-
 
             tables[i].addActionListener(new ActionListener() {
                 @Override
@@ -175,9 +172,26 @@ public class Pantalla extends JFrame {
                         int num = 0;
                         for (int j = 0; j < tablas.length ; j++) {
                             num = j;
-                            if (tablas[j] == text) break;
+                            if (tablas[j].equals(text)) break;
                         }
-                        tablabase1 = p.Preguntar("select * from " + text, tablabase[num][1]);
+
+                        tablabase2 = new String[tablabase[num].length];
+                        tablabase2_2 = new String[tablabase[num].length];
+
+                        for (int j = 0; j <tablabase2.length ; j++) {
+                            tablabase2[j] = tablabase[num][j][0];
+                            tablabase2_2[j] = tablabase[num][j][1];
+
+                            System.out.println(tablabase2[j]);
+                        }
+
+                        try {
+                            tablabase1 = p.Preguntar("select * from " + text, tablabase2);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+
+                        setJLTablas(p,tablabase1);
 
                     }
                 }
@@ -187,19 +201,32 @@ public class Pantalla extends JFrame {
             for (int j = 0; j < tablabase[i].length ; j++) {
                 for (int k = 0; k < tablabase[i][j].length ; k++) {
 
-                    System.out.print(tablabase[i][j][k] + "  ");
+                    System.out.print( i + " " + j + " " + k + " is " + tablabase[i][j][k] + "  ");
                 }
                 System.out.println("");
             }
         }
 
     }
-    public void setJLTablas(Database p){
+    public void setJLTablas(Database p, String[][] tablaX){
+        setVisible(false);
+        p_respuestas.removeAll();
+        int tamanio = tablaX.length % 10;
+        if (tablaX.length !=0 && tablaX[0].length != 0)
+        p_respuestas.setLayout(new GridLayout(tamanio, tamanio,10,10));
+        else
+            p_respuestas.setLayout(new GridLayout(1, 1,10,10));
 
-        for (int i = 0; i <teibol.length ; i++) {
-
+        teibol = new JLabel[tablaX.length];
+        for (int i = 0; i <tablaX.length ; i++) {
+            StringBuilder nombre = new StringBuilder();
+            for (int j = 0; j <tablaX[i].length ; j++) {
+                nombre.append(tablaX[i][j]).append(" ");
+            }
+            teibol[i] = new JLabel(String.valueOf(nombre));
+            p_respuestas.add(teibol[i]);
         }
-
+        setVisible(true);
     }
 
     public void AddJBTables(Database p){
